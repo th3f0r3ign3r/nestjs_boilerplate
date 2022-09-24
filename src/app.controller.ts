@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpStatus } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller('/api')
@@ -7,6 +7,6 @@ export class AppController {
 
   @Get()
   root(): { [key: string]: string | number } {
-    return { status: '200', message: 'Tutto va bene' };
+    return { status: HttpStatus.OK, message: 'API is working !' };
   }
 }

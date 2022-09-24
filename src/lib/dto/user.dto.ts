@@ -57,9 +57,14 @@ export class UserDto implements IUser {
 }
 
 export class CreateUserDto extends OmitType(UserDto, [
+  'city',
+  'roles',
+  'phone',
+  'address',
+  'country',
+  'birthdate',
   'updatedAt',
   'createdAt',
-  'roles',
   'isValidated',
 ] as const) {}
 
