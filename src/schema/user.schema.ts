@@ -15,13 +15,13 @@ export class User implements IUser {
 
   @Prop({ required: true, unique: true })
   email: string;
-  @Prop({ default: false, required: true })
+  @Prop({ default: false })
   isValidated: boolean;
   @Prop()
   phone: string;
   @Prop({ required: true })
   password: string;
-  @Prop({ required: true, default: Roles.USER })
+  @Prop({ default: Roles.USER })
   roles: Array<Roles>;
 
   @Prop()

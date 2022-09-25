@@ -1,56 +1,62 @@
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
+  MinLength,
 } from 'class-validator';
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { IUser } from '../entities';
 import { Roles } from '../types';
 
 export class UserDto implements IUser {
-  @IsNotEmpty()
   @IsEmail()
   @IsString()
+  @IsNotEmpty()
   email: string;
-  @IsNotEmpty()
   @IsBoolean()
-  isValidated: boolean;
   @IsNotEmpty()
+  isValidated: boolean;
   @IsString()
+  @IsNotEmpty()
   password: string;
   @IsNotEmpty()
   @IsString({ each: true })
   roles: Array<Roles>;
-  @IsNotEmpty()
   @IsString()
+  @MinLength(2)
+  @IsNotEmpty()
   username: string;
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   firstname: string;
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   lastname: string;
+  @IsString()
   @IsNotEmpty()
   @IsPhoneNumber()
-  @IsString()
   phone: string;
-  @IsNotEmpty()
+  @IsDate()
   @IsString()
+  @IsNotEmpty()
   birthdate: Date;
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   address: string;
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   city: string;
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   country: string;
+  @IsDate()
   @IsString()
   @IsNotEmpty()
   updatedAt: Date;
+  @IsDate()
   @IsString()
   @IsNotEmpty()
   createdAt: Date;
@@ -69,7 +75,13 @@ export class CreateUserDto extends OmitType(UserDto, [
 ] as const) {}
 
 export class UpdateUserDto extends PartialType(
-  OmitType(UserDto, ['createdAt'] as const),
+  OmitType(UserDto, [
+    'roles',
+    'password',
+    'username',
+    'createdAt',
+    'isValidated',
+  ] as const),
 ) {}
 
 export class SignInUserDto extends PickType(UserDto, [
