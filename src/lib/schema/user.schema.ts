@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IUser } from '../lib/entities';
-import { Roles } from '../lib/types';
+import { IUser } from '../entities';
+import { Roles } from '../types';
 
 @Schema()
 export class User implements IUser {
@@ -28,6 +28,8 @@ export class User implements IUser {
   address: string;
   @Prop()
   city: string;
+  @Prop()
+  postalCode: string;
   @Prop()
   country: string;
 
