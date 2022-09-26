@@ -51,6 +51,9 @@ export class UserDto implements IUser {
   city: string;
   @IsString()
   @IsNotEmpty()
+  postalCode: string;
+  @IsString()
+  @IsNotEmpty()
   country: string;
   @IsDate()
   @IsString()
@@ -71,6 +74,7 @@ export class CreateUserDto extends OmitType(UserDto, [
   'birthdate',
   'updatedAt',
   'createdAt',
+  'postalCode',
   'isValidated',
 ] as const) {}
 

@@ -13,6 +13,7 @@ export interface IUser {
 
   address: string;
   city: string;
+  postalCode: string;
   country: string;
   phone: string;
   birthdate: Date;

@@ -17,7 +17,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     if ((await this.userModel.exists({ email: createUserDto.email })) !== null)
       throw new HttpException(
-        'USER.ERROR_EMAIL_ALREADY_EXIST',
+        'USER.ERROR.EMAIL_ALREADY_EXIST',
         HttpStatus.CONFLICT,
       );
     else if (
@@ -25,7 +25,7 @@ export class UsersService {
       null
     )
       throw new HttpException(
-        'USER.ERROR_USERNAME_ALREADY_EXIST',
+        'USER.ERROR.USERNAME_ALREADY_EXIST',
         HttpStatus.CONFLICT,
       );
     else {
@@ -39,7 +39,7 @@ export class UsersService {
       });
       if (!user)
         throw new HttpException(
-          'USER.ERROR_USER_NOT_CREATED',
+          'USER.ERROR.USER_NOT_CREATED',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       else
@@ -63,12 +63,16 @@ export class UsersService {
     return count ? { response: true } : { response: false };
   }
 
-  async findOne(id: ParseIdPipe) {
+  async findById(id: ParseIdPipe) {
     return { response: await this.userModel.findById(id) };
   }
 
+  async findOne(query: any) {
+    return await this.userModel.findOne(query);
+  }
+
   async update(id: ParseIdPipe, updateUserDto: UpdateUserDto) {
-    await this.userModel.findByIdAndUpdate(id, {
+    const user = await this.userModel.findByIdAndUpdate(id, {
       firstname: updateUserDto?.firstname,
       lastname: updateUserDto?.lastname,
       email: updateUserDto?.email,
@@ -79,11 +83,21 @@ export class UsersService {
       birthdate: updateUserDto?.birthdate,
       updatedAt: new Date(),
     });
-    return { response: 'User successfully updated' };
+    if (!user)
+      throw new HttpException(
+        'USER.ERROR.USER_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+      );
+    else return { response: 'User successfully updated' };
   }
 
   async remove(id: ParseIdPipe) {
-    await this.userModel.findByIdAndDelete(id).exec();
-    return { response: 'User successfully removed' };
+    const user = await this.userModel.findByIdAndDelete(id).exec();
+    if (!user)
+      throw new HttpException(
+        'USER.ERROR.USER_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+      );
+    else return { response: 'User successfully removed' };
   }
 }

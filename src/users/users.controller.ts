@@ -33,8 +33,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIdPipe) id) {
-    return await this.usersService.findOne(id);
+  async findById(@Param('id', ParseIdPipe) id) {
+    return await this.usersService.findById(id);
   }
 
   @Patch(':id')

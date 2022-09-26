@@ -29,6 +29,8 @@ export class User implements IUser {
   @Prop()
   city: string;
   @Prop()
+  postalCode: string;
+  @Prop()
   country: string;
 
   @Prop({ default: () => new Date() })
