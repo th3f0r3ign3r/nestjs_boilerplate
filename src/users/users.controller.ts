@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   HttpCode,
+  UseInterceptors,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/lib/dto';
 import { ParseIdPipe } from 'src/lib/pipes';
 import { UsersService } from './users.service';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
