@@ -1,9 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { v1 as uuidv1 } from 'uuid';
 import { IUser } from '../entities';
 import { Roles } from '../types';
 
 @Schema()
 export class User implements IUser {
+  @Prop({
+    required: true,
+    unique: true,
+    default: uuidv1({
+      msecs: new Date().getMilliseconds(),
+    }),
+  })
+  uuid: string;
+
   @Prop({ required: true, unique: true })
   username: string;
   @Prop()

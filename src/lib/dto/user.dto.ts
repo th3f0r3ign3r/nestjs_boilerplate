@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
+  IsUUID,
   MinLength,
 } from 'class-validator';
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
@@ -12,6 +13,10 @@ import { IUser } from '../entities';
 import { Roles } from '../types';
 
 export class UserDto implements IUser {
+  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
+  uuid: string;
   @IsEmail()
   @IsString()
   @IsNotEmpty()
@@ -66,6 +71,7 @@ export class UserDto implements IUser {
 }
 
 export class CreateUserDto extends OmitType(UserDto, [
+  'uuid',
   'city',
   'roles',
   'phone',
@@ -80,6 +86,7 @@ export class CreateUserDto extends OmitType(UserDto, [
 
 export class UpdateUserDto extends PartialType(
   OmitType(UserDto, [
+    'uuid',
     'roles',
     'password',
     'username',

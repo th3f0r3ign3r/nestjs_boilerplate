@@ -2,6 +2,8 @@ import { Document } from 'mongoose';
 import { Roles } from '../types';
 
 export interface IUser {
+  uuid: string;
+
   email: string;
   username: string;
   firstname: string;
