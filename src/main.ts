@@ -1,7 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as csurf from 'csurf';
 import helmet from 'helmet';
 
 async function bootstrap() {

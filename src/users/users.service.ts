@@ -68,7 +68,7 @@ export class UsersService {
   }
 
   async findByUuid(uuid: ParseUUIDPipe) {
-    return await this.userModel.find({ uuid });
+    return await this.userModel.findOne({ uuid });
   }
 
   async findOne(query: any) {
