@@ -92,5 +92,3 @@ export class SignInUserDto extends PickType(UserDto, [
   'email',
   'password',
 ] as const) {}
-
-export class SafeUserDto extends OmitType(UserDto, ['password'] as const) {}

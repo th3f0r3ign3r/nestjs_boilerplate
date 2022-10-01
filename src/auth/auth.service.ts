@@ -17,7 +17,8 @@ export class AuthService {
   }
 
   async getProfile(id: ParseIdPipe) {
-    return await this.usersService.findById(id);
+    const user = await this.usersService.findById(id);
+    return user.response;
   }
 
   async login(payload: SignInUserDto): Promise<{ access_token: string }> {
