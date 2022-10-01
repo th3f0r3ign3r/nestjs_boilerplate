@@ -30,7 +30,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Request() req) {
-    const user = await this.authService.getProfile(req.user._id);
+    const user = await this.authService.getProfile(req.user.uuid);
     return serializeUser(user);
   }
 }

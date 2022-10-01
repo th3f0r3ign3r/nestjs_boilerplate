@@ -11,7 +11,7 @@ import {
   CacheInterceptor,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/lib/dto';
-import { ParseIdPipe } from 'src/lib/pipes';
+import { ArraySerializeUser, serializeUser } from 'src/lib/types';
 import { UsersService } from './users.service';
 
 @UseInterceptors(CacheInterceptor)
@@ -26,30 +26,29 @@ export class UsersController {
 
   @Get()
   async findAll() {
-    return await this.usersService.findAll();
+    return { response: ArraySerializeUser(await this.usersService.findAll()) };
   }
 
   @HttpCode(200)
   @Post('checkAvailability')
-  async checkAvailability(@Body() payload: { id: ParseIdPipe; query: object }) {
+  async checkAvailability(@Body() payload: { uuid: string; query: object }) {
     return await this.usersService.checkAvailability(payload);
   }
 
-  @Get(':id')
-  async findById(@Param('id', ParseIdPipe) id) {
-    return await this.usersService.findById(id);
+  @Get(':uuid')
+  async findByUuId(@Param('uuid') uuid) {
+    return {
+      response: serializeUser(await this.usersService.findByUuid(uuid)),
+    };
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id', ParseIdPipe) id,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return await this.usersService.update(id, updateUserDto);
+  @Patch(':uuid')
+  async update(@Param('uuid') uuid, @Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.update(uuid, updateUserDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id', ParseIdPipe) id) {
-    return await this.usersService.remove(id);
+  @Delete(':uuid')
+  async remove(@Param('uuid') uuid) {
+    return await this.usersService.remove(uuid);
   }
 }

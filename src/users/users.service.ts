@@ -1,12 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/lib/dto';
-import { ParseIdPipe } from 'src/lib/pipes';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument } from 'src/lib/entities';
 import { User } from 'src/lib/schema';
-import { ArraySerializeUser, serializeUser } from 'src/lib/types';
 
 @Injectable()
 export class UsersService {
@@ -51,39 +49,42 @@ export class UsersService {
   }
 
   async findAll() {
-    return { response: ArraySerializeUser(await this.userModel.find()) };
+    return await this.userModel.find();
   }
 
-  async checkAvailability(payload: { id: ParseIdPipe; query: object }) {
+  async checkAvailability(payload: { uuid: string; query: object }) {
     const count = await this.userModel
       .find(payload.query)
-      .where('_id')
-      .ne(payload.id)
+      .where('uuid')
+      .ne(payload.uuid)
       .count()
       .exec();
     return count ? { response: true } : { response: false };
   }
 
-  async findById(id: ParseIdPipe) {
-    return { response: serializeUser(await this.userModel.findById(id)) };
+  async findByUuid(uuid) {
+    return await this.userModel.find({ uuid });
   }
 
   async findOne(query: any) {
     return await this.userModel.findOne(query);
   }
 
-  async update(id: ParseIdPipe, updateUserDto: UpdateUserDto) {
-    const user = await this.userModel.findByIdAndUpdate(id, {
-      firstname: updateUserDto?.firstname,
-      lastname: updateUserDto?.lastname,
-      email: updateUserDto?.email,
-      city: updateUserDto?.city,
-      country: updateUserDto?.country,
-      phone: updateUserDto?.phone,
-      address: updateUserDto?.address,
-      birthdate: updateUserDto?.birthdate,
-      updatedAt: new Date(),
-    });
+  async update(uuid: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userModel.findOneAndUpdate(
+      { uuid },
+      {
+        firstname: updateUserDto?.firstname,
+        lastname: updateUserDto?.lastname,
+        email: updateUserDto?.email,
+        city: updateUserDto?.city,
+        country: updateUserDto?.country,
+        phone: updateUserDto?.phone,
+        address: updateUserDto?.address,
+        birthdate: updateUserDto?.birthdate,
+        updatedAt: new Date(),
+      },
+    );
     if (!user)
       throw new HttpException(
         'USER.ERROR.USER_NOT_FOUND',
@@ -92,8 +93,8 @@ export class UsersService {
     else return { response: 'User successfully updated' };
   }
 
-  async remove(id: ParseIdPipe) {
-    const user = await this.userModel.findByIdAndDelete(id).exec();
+  async remove(uuid: string) {
+    const user = await this.userModel.findOneAndDelete({ uuid }).exec();
     if (!user)
       throw new HttpException(
         'USER.ERROR.USER_NOT_FOUND',

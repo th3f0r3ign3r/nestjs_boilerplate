@@ -1,4 +1,3 @@
-import { ParseIdPipe } from 'src/lib/pipes';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -16,9 +15,8 @@ export class AuthService {
     return await this.usersService.create(payload);
   }
 
-  async getProfile(id: ParseIdPipe) {
-    const user = await this.usersService.findById(id);
-    return user.response;
+  async getProfile(uuid) {
+    return await this.usersService.findByUuid(uuid);
   }
 
   async login(payload: SignInUserDto): Promise<{ access_token: string }> {
@@ -29,7 +27,7 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign({
-        _id: user._id,
+        uuid: user.uuid,
         roles: user.roles,
       }),
     };
