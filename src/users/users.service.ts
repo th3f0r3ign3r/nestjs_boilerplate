@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument } from 'src/lib/entities';
 import { User } from 'src/lib/schema';
+import { ArraySerializeUser, serializeUser } from 'src/lib/types';
 
 @Injectable()
 export class UsersService {
@@ -50,7 +51,7 @@ export class UsersService {
   }
 
   async findAll() {
-    return { response: await this.userModel.find() };
+    return { response: ArraySerializeUser(await this.userModel.find()) };
   }
 
   async checkAvailability(payload: { id: ParseIdPipe; query: object }) {
@@ -64,7 +65,7 @@ export class UsersService {
   }
 
   async findById(id: ParseIdPipe) {
-    return { response: await this.userModel.findById(id) };
+    return { response: serializeUser(await this.userModel.findById(id)) };
   }
 
   async findOne(query: any) {

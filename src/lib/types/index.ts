@@ -11,3 +11,7 @@ export const serializeUser = (user: object) => {
   });
   return user;
 };
+
+export const ArraySerializeUser = (users: object[]) => {
+  return users.map((user) => (user = serializeUser(user)));
+};
