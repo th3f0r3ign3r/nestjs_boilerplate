@@ -1,3 +1,4 @@
+import { ParseUUIDPipe } from '@nestjs/common';
 import {
   IsBoolean,
   IsDate,
@@ -16,7 +17,7 @@ export class UserDto implements IUser {
   @IsUUID()
   @IsString()
   @IsNotEmpty()
-  uuid: string;
+  uuid: ParseUUIDPipe;
   @IsEmail()
   @IsString()
   @IsNotEmpty()

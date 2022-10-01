@@ -1,3 +1,4 @@
+import { ParseUUIDPipe } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { v1 as uuidv1 } from 'uuid';
 import { IUser } from '../entities';
@@ -12,7 +13,7 @@ export class User implements IUser {
       msecs: new Date().getMilliseconds(),
     }),
   })
-  uuid: string;
+  uuid: ParseUUIDPipe;
 
   @Prop({ required: true, unique: true })
   username: string;

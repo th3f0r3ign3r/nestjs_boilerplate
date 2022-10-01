@@ -9,6 +9,7 @@ import {
   HttpCode,
   UseInterceptors,
   CacheInterceptor,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/lib/dto';
 import { ArraySerializeUser, serializeUser } from 'src/lib/types';
@@ -31,24 +32,29 @@ export class UsersController {
 
   @HttpCode(200)
   @Post('checkAvailability')
-  async checkAvailability(@Body() payload: { uuid: string; query: object }) {
+  async checkAvailability(
+    @Body() payload: { uuid: ParseUUIDPipe; query: object },
+  ) {
     return await this.usersService.checkAvailability(payload);
   }
 
   @Get(':uuid')
-  async findByUuId(@Param('uuid') uuid) {
+  async findByUuId(@Param('uuid', ParseUUIDPipe) uuid) {
     return {
       response: serializeUser(await this.usersService.findByUuid(uuid)),
     };
   }
 
   @Patch(':uuid')
-  async update(@Param('uuid') uuid, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('uuid', ParseUUIDPipe) uuid,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return await this.usersService.update(uuid, updateUserDto);
   }
 
   @Delete(':uuid')
-  async remove(@Param('uuid') uuid) {
+  async remove(@Param('uuid', ParseUUIDPipe) uuid) {
     return await this.usersService.remove(uuid);
   }
 }

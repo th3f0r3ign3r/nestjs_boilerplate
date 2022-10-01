@@ -1,8 +1,9 @@
+import { ParseUUIDPipe } from '@nestjs/common';
 import { Document } from 'mongoose';
 import { Roles } from '../types';
 
 export interface IUser {
-  uuid: string;
+  uuid: ParseUUIDPipe;
 
   email: string;
   username: string;

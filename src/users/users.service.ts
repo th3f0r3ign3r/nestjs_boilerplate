@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/lib/dto';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -52,7 +57,7 @@ export class UsersService {
     return await this.userModel.find();
   }
 
-  async checkAvailability(payload: { uuid: string; query: object }) {
+  async checkAvailability(payload: { uuid: ParseUUIDPipe; query: object }) {
     const count = await this.userModel
       .find(payload.query)
       .where('uuid')
@@ -62,7 +67,7 @@ export class UsersService {
     return count ? { response: true } : { response: false };
   }
 
-  async findByUuid(uuid) {
+  async findByUuid(uuid: ParseUUIDPipe) {
     return await this.userModel.find({ uuid });
   }
 
@@ -70,7 +75,7 @@ export class UsersService {
     return await this.userModel.findOne(query);
   }
 
-  async update(uuid: string, updateUserDto: UpdateUserDto) {
+  async update(uuid: ParseUUIDPipe, updateUserDto: UpdateUserDto) {
     const user = await this.userModel.findOneAndUpdate(
       { uuid },
       {
@@ -93,7 +98,7 @@ export class UsersService {
     else return { response: 'User successfully updated' };
   }
 
-  async remove(uuid: string) {
+  async remove(uuid: ParseUUIDPipe) {
     const user = await this.userModel.findOneAndDelete({ uuid }).exec();
     if (!user)
       throw new HttpException(

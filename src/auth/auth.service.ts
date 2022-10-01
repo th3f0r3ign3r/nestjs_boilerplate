@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ParseUUIDPipe,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, SignInUserDto } from 'src/lib/dto';
@@ -15,7 +19,7 @@ export class AuthService {
     return await this.usersService.create(payload);
   }
 
-  async getProfile(uuid) {
+  async getProfile(uuid: ParseUUIDPipe) {
     return await this.usersService.findByUuid(uuid);
   }
 
