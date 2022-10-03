@@ -1,12 +1,19 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    CacheModule.register({
+      ttl: 5,
+      max: 100,
       isGlobal: true,
     }),
     MongooseModule.forRootAsync({
@@ -18,6 +25,8 @@ import { MongooseModule } from '@nestjs/mongoose';
         },
       }),
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
