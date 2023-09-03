@@ -8,18 +8,16 @@ async function bootstrap() {
   const port = 5000;
 
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-
   app.setGlobalPrefix('api');
-
-  app.use(helmet());
   app.use(compression());
+  app.use(helmet());
+  app.enableCors();
 
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // This will remove any properties that are not defined in the DTO
       forbidNonWhitelisted: true, // This will throw an error if the request contains a property that is not defined in the DTO
-      forbidUnknownValues: true, // This will throw an error if the request contains a property that is not defined in the DTO
+      forbidUnknownValues: true, // This will throw an error if the request contains an unknown values
       transform: true, // This will transform the request body to the DTO type
     }),
   );
