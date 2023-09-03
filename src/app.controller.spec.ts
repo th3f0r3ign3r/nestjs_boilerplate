@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
+import { HttpStatus } from '@nestjs/common';
 import { AppService } from './app.service';
 
 describe('AppController', () => {
@@ -15,8 +16,11 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Tutto va bene"', () => {
-      expect(appController.root()).toBe('Tutto va bene');
+    it('should return "Hello World!"', () => {
+      expect(appController.getHealth()).toBe({
+        statusCode: HttpStatus.OK,
+        message: 'API.ONLINE',
+      });
     });
   });
 });

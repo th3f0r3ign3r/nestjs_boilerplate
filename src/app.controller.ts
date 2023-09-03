@@ -1,12 +1,17 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Redirect } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller('/api')
+@Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-
   @Get()
-  root(): { [key: string]: string | number } {
-    return { status: HttpStatus.OK, message: 'API is working !' };
+  @Redirect('health', HttpStatus.MOVED_PERMANENTLY)
+  root() {
+    return;
+  }
+
+  @Get('health')
+  getHealth(): { statusCode: number; message: string } {
+    return { statusCode: HttpStatus.OK, message: 'API.ONLINE' };
   }
 }
