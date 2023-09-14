@@ -2,9 +2,12 @@
   "name": "nestjs-boilerplate",
   "version": "2.0.0",
   "description": "",
-  "author": "",
+  "author": "th3f0r31gn3r",
   "private": true,
   "license": "UNLICENSED",
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

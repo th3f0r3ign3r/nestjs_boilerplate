@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateUserDTO, UpdateUserDTO } from 'src/lib/dto/user.dto';
-import { PrismaQuery } from 'src/lib/prima.service';
+import { PrismaQuery } from 'src/prisma/prima.service';
 import { UsersService } from './users.service';
 import { User } from '@prisma/client';
 

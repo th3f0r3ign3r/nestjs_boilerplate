@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  USER
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  Profile   Profile?
+}
+
+model Profile {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  picture    S3Object @relation(fields: [s3ObjectId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique @db.ObjectId
+  s3ObjectId String   @db.ObjectId
+}
+
+model S3Object {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now())
+  key       String?
+  url       String?
+  bucket    String?
+  region    String?
+  Profile   Profile[]
+}
