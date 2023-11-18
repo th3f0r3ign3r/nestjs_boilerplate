@@ -8,7 +8,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 }
 
-export type PrismaQuery = {
+export type PrismaUserSTCWOQuery = {
   skip?: number;
   take?: number;
   cursor?: Prisma.UserWhereUniqueInput;

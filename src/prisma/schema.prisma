@@ -16,30 +16,49 @@ enum Role {
   USER
 }
 
+enum Status {
+  CREATED
+  DISABLED
+  VERIFIED
+}
+
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String   @unique
-  name      String?
-  role      Role     @default(USER)
-  Profile   Profile?
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  username    String       @unique
+  fullname    String
+  profile     String?
+  role        Role         @default(USER)
+  status      Status       @default(CREATED)
+  Session     Session[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  authRequest AuthRequest?
 }
 
-model Profile {
+model AuthRequest {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  picture    S3Object @relation(fields: [s3ObjectId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String   @unique @db.ObjectId
-  s3ObjectId String   @db.ObjectId
+  identifier String   @unique @default(cuid())
+  token      String   @unique
+  expires    DateTime
+  user       User     @relation(fields: [userEmail], references: [email])
+  userEmail  String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
-model S3Object {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime  @default(now())
-  key       String?
-  url       String?
-  bucket    String?
-  region    String?
-  Profile   Profile[]
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId    String   @unique
+  browser      Json     @default("{}")
+  os           Json     @default("{}")
+  device       Json     @default("{}")
+  accessToken  String   @unique
+  userAgent    String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique @db.ObjectId
+  lastActivity DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
