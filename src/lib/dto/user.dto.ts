@@ -1,8 +1,9 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { User } from '@prisma/client';
+import { Role, Status, User, AuthRequest } from '@prisma/client';
 import {
   IsDateString,
   IsEmail,
+  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsString,
@@ -15,11 +16,68 @@ export class UserDTO implements User {
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  fullname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  username: string;
 
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  profile: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  createdAt: Date;
+
+  @IsEnum(Role)
+  @IsNotEmpty()
+  role: Role;
+
+  @IsEnum(Status)
+  @IsNotEmpty()
+  status: Status;
+
+  @IsDateString()
+  @IsNotEmpty()
+  updatedAt: Date;
+}
+
+export class CreateUserDTO extends OmitType(UserDTO, [
+  'createdAt',
+  'updatedAt',
+  'profile',
+  'status',
+  'role',
+  'id',
+]) {}
+
+export class UpdateUserDTO extends PartialType(CreateUserDTO) {}
+
+export class AuthRequestDTO implements AuthRequest {
+  @IsMongoId()
+  @IsNotEmpty()
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  userEmail: string;
+
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  expires: Date;
 
   @IsDateString()
   @IsNotEmpty()
@@ -30,10 +88,9 @@ export class UserDTO implements User {
   updatedAt: Date;
 }
 
-export class CreateUserDTO extends OmitType(UserDTO, [
+export class VerifyAuthRequestDTO extends OmitType(AuthRequestDTO, [
   'id',
+  'expires',
   'createdAt',
   'updatedAt',
 ]) {}
-
-export class UpdateUserDTO extends PartialType(CreateUserDTO) {}
