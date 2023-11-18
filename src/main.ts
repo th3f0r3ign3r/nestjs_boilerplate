@@ -11,7 +11,11 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.use(compression());
   app.use(helmet());
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:' + port],
+    methods: ['GET', 'POST', 'DELETE', 'PATCH'],
+    credentials: true,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -23,7 +27,7 @@ async function bootstrap() {
   );
 
   await app.listen(port, () => {
-    Logger.log(`Server running at http://localhost:${port}/`);
+    Logger.log(`🚀 Server running at http://localhost:${port}/`);
   });
 }
 
