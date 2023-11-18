@@ -1,60 +1,59 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  HttpCode,
-  UseInterceptors,
-  CacheInterceptor,
-  ParseUUIDPipe,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from 'src/lib/dto';
-import { ArraySerializeUser, serializeUser } from 'src/lib/types';
+import { CreateUserDTO, UpdateUserDTO } from '@/lib/dto/user.dto';
+import { PrismaUserSTCWOQuery } from '@/prisma/prisma.service';
 import { UsersService } from './users.service';
+import { User } from '@prisma/client';
+import { AuthTokenGuard, RolesGuard } from '@/lib/guards';
+import { ACCESS } from '@/lib/decorators';
 
-@UseInterceptors(CacheInterceptor)
-@Controller('api/users')
+@UseGuards(AuthTokenGuard, RolesGuard)
+@Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
-  }
+  constructor(private readonly userService: UsersService) {}
 
   @Get()
-  async findAll() {
-    return { response: ArraySerializeUser(await this.usersService.findAll()) };
+  @ACCESS('ADMIN', 'OWNER')
+  async findAll(@Query() query: PrismaUserSTCWOQuery): Promise<User[]> {
+    return this.userService.findMany(query);
   }
 
-  @HttpCode(200)
-  @Post('checkAvailability')
-  async checkAvailability(
-    @Body() payload: { uuid: ParseUUIDPipe; query: object },
-  ) {
-    return await this.usersService.checkAvailability(payload);
+  @Get(':id')
+  @ACCESS('ADMIN', 'OWNER')
+  async findById(@Param('id') id: string): Promise<User> {
+    return this.userService.findUnique({ id: String(id) });
   }
 
-  @Get(':uuid')
-  async findByUuId(@Param('uuid', ParseUUIDPipe) uuid) {
-    return {
-      response: serializeUser(await this.usersService.findByUuid(uuid)),
-    };
+  @Post()
+  @ACCESS('ADMIN', 'OWNER')
+  async create(@Body() payload: CreateUserDTO): Promise<User> {
+    return this.userService.create(payload);
   }
 
-  @Patch(':uuid')
+  @Patch(':id')
+  @ACCESS('ADMIN', 'OWNER')
   async update(
-    @Param('uuid', ParseUUIDPipe) uuid,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return await this.usersService.update(uuid, updateUserDto);
+    @Param('id') id: string,
+    @Body() payload: UpdateUserDTO,
+  ): Promise<User> {
+    return this.userService.update({
+      where: { id: String(id) },
+      data: payload,
+    });
   }
 
-  @Delete(':uuid')
-  async remove(@Param('uuid', ParseUUIDPipe) uuid) {
-    return await this.usersService.remove(uuid);
+  @Delete(':id')
+  @ACCESS('ADMIN', 'OWNER')
+  async delete(@Param('id') id: string): Promise<User> {
+    return this.userService.delete({ id: String(id) });
   }
 }

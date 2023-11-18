@@ -1,102 +1,96 @@
-import { ParseUUIDPipe } from '@nestjs/common';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { Role, Status, User, AuthRequest } from '@prisma/client';
 import {
-  IsBoolean,
-  IsDate,
+  IsDateString,
   IsEmail,
+  IsEnum,
+  IsMongoId,
   IsNotEmpty,
-  IsPhoneNumber,
   IsString,
-  IsUUID,
-  MinLength,
 } from 'class-validator';
-import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
-import { IUser } from '../entities';
-import { Roles } from '../types';
 
-export class UserDto implements IUser {
-  @IsUUID()
+export class UserDTO implements User {
+  @IsMongoId()
+  @IsNotEmpty()
+  id: string;
+
   @IsString()
   @IsNotEmpty()
-  uuid: ParseUUIDPipe;
-  @IsEmail()
+  fullname: string;
+
   @IsString()
-  @IsNotEmpty()
-  email: string;
-  @IsBoolean()
-  @IsNotEmpty()
-  isValidated: boolean;
-  @IsString()
-  @IsNotEmpty()
-  password: string;
-  @IsNotEmpty()
-  @IsString({ each: true })
-  roles: Array<Roles>;
-  @IsString()
-  @MinLength(2)
   @IsNotEmpty()
   username: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
   @IsString()
   @IsNotEmpty()
-  firstname: string;
-  @IsString()
-  @IsNotEmpty()
-  lastname: string;
-  @IsString()
-  @IsNotEmpty()
-  @IsPhoneNumber()
-  phone: string;
-  @IsDate()
-  @IsString()
-  @IsNotEmpty()
-  birthdate: Date;
-  @IsString()
-  @IsNotEmpty()
-  address: string;
-  @IsString()
-  @IsNotEmpty()
-  city: string;
-  @IsString()
-  @IsNotEmpty()
-  postalCode: string;
-  @IsString()
-  @IsNotEmpty()
-  country: string;
-  @IsDate()
-  @IsString()
-  @IsNotEmpty()
-  updatedAt: Date;
-  @IsDate()
-  @IsString()
+  profile: string;
+
+  @IsDateString()
   @IsNotEmpty()
   createdAt: Date;
+
+  @IsEnum(Role)
+  @IsNotEmpty()
+  role: Role;
+
+  @IsEnum(Status)
+  @IsNotEmpty()
+  status: Status;
+
+  @IsDateString()
+  @IsNotEmpty()
+  updatedAt: Date;
 }
 
-export class CreateUserDto extends OmitType(UserDto, [
-  'uuid',
-  'city',
-  'roles',
-  'phone',
-  'address',
-  'country',
-  'birthdate',
-  'updatedAt',
+export class CreateUserDTO extends OmitType(UserDTO, [
   'createdAt',
-  'postalCode',
-  'isValidated',
-] as const) {}
+  'updatedAt',
+  'profile',
+  'status',
+  'role',
+  'id',
+]) {}
 
-export class UpdateUserDto extends PartialType(
-  OmitType(UserDto, [
-    'uuid',
-    'roles',
-    'password',
-    'username',
-    'createdAt',
-    'isValidated',
-  ] as const),
-) {}
+export class UpdateUserDTO extends PartialType(CreateUserDTO) {}
 
-export class SignInUserDto extends PickType(UserDto, [
-  'email',
-  'password',
-] as const) {}
+export class AuthRequestDTO implements AuthRequest {
+  @IsMongoId()
+  @IsNotEmpty()
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  userEmail: string;
+
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  expires: Date;
+
+  @IsDateString()
+  @IsNotEmpty()
+  createdAt: Date;
+
+  @IsDateString()
+  @IsNotEmpty()
+  updatedAt: Date;
+}
+
+export class VerifyAuthRequestDTO extends OmitType(AuthRequestDTO, [
+  'id',
+  'expires',
+  'createdAt',
+  'updatedAt',
+]) {}

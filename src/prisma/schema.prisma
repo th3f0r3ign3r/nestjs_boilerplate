@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  USER
+}
+
+enum Status {
+  CREATED
+  DISABLED
+  VERIFIED
+}
+
+model User {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  username    String       @unique
+  fullname    String
+  profile     String?
+  role        Role         @default(USER)
+  status      Status       @default(CREATED)
+  Session     Session[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  authRequest AuthRequest?
+}
+
+model AuthRequest {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String   @unique @default(cuid())
+  token      String   @unique
+  expires    DateTime
+  user       User     @relation(fields: [userEmail], references: [email])
+  userEmail  String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId    String   @unique
+  browser      Json     @default("{}")
+  os           Json     @default("{}")
+  device       Json     @default("{}")
+  accessToken  String   @unique
+  userAgent    String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique @db.ObjectId
+  lastActivity DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
