@@ -1,4 +1,4 @@
-import { MailOptionsType, mailOptions } from '@/lib/types';
+import { MailOptionsType, mailOptions } from '@/lib/validation';
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
